@@ -1,0 +1,55 @@
+1]
+Total Employees = COUNTROWS('WA_Fn-UseC_-HR-Employee-Attrition')
+Total Attritions = CALCULATE(COUNTROWS('WA_Fn-UseC_-HR-Employee-Attrition'), 'WA_Fn-UseC_-HR-Employee-Attrition'[Attrition]= "Yes")
+Attrition Rate % = DIVIDE([Total Attritions], [Total Employees])
+
+3]
+Total Retained Employees = CALCULATE(COUNTROWS('WA_Fn-UseC_-HR-Employee-Attrition'), 'WA_Fn-UseC_-HR-Employee-Attrition'[Attrition] = "No")
+Overall Retention Rate % = DIVIDE([Total Retained Employees], [Total Employees])
+
+4]
+Age Group =
+SWITCH(
+    TRUE(),
+    'WA_Fn-UseC_-HR-Employee-Attrition'[Age] < 25, "18-24 (Youngest)",
+    'WA_Fn-UseC_-HR-Employee-Attrition'[Age] < 35, "25-34 (High Attrition)",
+    'WA_Fn-UseC_-HR-Employee-Attrition'[Age] < 45, "35-44 (Mid Career)",
+    'WA_Fn-UseC_-HR-Employee-Attrition'[Age] < 55, "45-54 (Senior)",
+    "55+ (Pre-Retirement)"
+)
+
+8]
+Avg Training Hours = AVERAGE( 'WA_Fn-UseC_-HR-Employee-Attrition'[TrainingTimesLastYear] )
+
+9]
+Training Bucket = 
+IF('WA_Fn-UseC_-HR-Employee-Attrition'[TrainingTimesLastYear] >= 3, "High", "Low")
+
+12]
+Salary Slab = 
+SWITCH(
+  TRUE(),
+  'WA_Fn-UseC_-HR-Employee-Attrition'[MonthlyIncome]<= 3000, "Low",
+  'WA_Fn-UseC_-HR-Employee-Attrition'[MonthlyRate] <= 7000, "Medium",
+  "High"
+)
+
+14]
+Years Bucket = 
+SWITCH(
+  TRUE(),
+  'WA_Fn-UseC_-HR-Employee-Attrition'[YearsAtCompany] <= 1, "0-1",
+  'WA_Fn-UseC_-HR-Employee-Attrition'[YearsAtCompany]<= 3, "2-3",
+  'WA_Fn-UseC_-HR-Employee-Attrition'[YearsAtCompany] <= 5, "4-5",
+  'WA_Fn-UseC_-HR-Employee-Attrition'[YearsAtCompany] <= 10, "6-10",
+  "10+"
+)
+
+15]
+Trained Attrition Count = 
+CALCULATE( [Total Attritions], FILTER( 'WA_Fn-UseC_-HR-Employee-Attrition','WA_Fn-UseC_-HR-Employee-Attrition'[TrainingTimesLastYear] >= 3 ) )
+
+
+Trained Total = CALCULATE( [Total Employees], FILTER( 'WA_Fn-UseC_-HR-Employee-Attrition', 'WA_Fn-UseC_-HR-Employee-Attrition'[TrainingTimesLastYear] >= 3 ) )
+
+Trained Attrition Rate = DIVIDE( [Trained Attrition Count], [Trained Total], 0 )
